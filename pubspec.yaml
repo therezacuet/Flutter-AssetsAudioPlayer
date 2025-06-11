@@ -17,6 +17,14 @@ dependencies:
   http: ">=0.13.0 <2.0.0"
   path_provider: ^2.0.8
 
+  # The design on https://flutter.dev/go/federated-plugins was to leave
+  # this constraint as 'any'. We cannot do it right now as it fails pub publish
+  # validation, so we set a ^ constraint.
+  # TODO(amirh): Revisit this (either update this part in the design or the pub tool).
+  # https://github.com/flutter/flutter/issues/46264
+  # assets_audio_player_web: ^3.0.0-nullsafety.0
+  assets_audio_player_web: ^3.1.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -33,3 +41,5 @@ flutter:
         pluginClass: AssetsAudioPlayerPlugin
       macos:
         pluginClass: AssetsAudioPlayerPlugin
+      web:
+        default_package: assets_audio_player_web
