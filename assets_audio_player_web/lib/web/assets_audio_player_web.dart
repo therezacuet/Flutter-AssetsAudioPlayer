@@ -65,17 +65,18 @@ class AssetsAudioPlayerWebPlugin {
         return Future.value(true);
       case 'volume':
         final String id = call.arguments['id'];
-        final double volume = call.arguments['volume'];
+        final double volume = (call.arguments['volume'] as num).toDouble();
         _getOrCreate(id).volume = volume;
         return Future.value(true);
       case 'playSpeed':
         final String id = call.arguments['id'];
-        final double playSpeed = call.arguments['playSpeed'];
+        final double playSpeed =
+            (call.arguments['playSpeed'] as num).toDouble();
         _getOrCreate(id).playSpeed = playSpeed;
         return Future.value(true);
       case 'forwardRewind':
         final String id = call.arguments['id'];
-        final double speed = call.arguments['speed'];
+        final double speed = (call.arguments['speed'] as num).toDouble();
         _getOrCreate(id).forwardRewind(speed);
         return Future.value(true);
       case 'loopSingleAudio':
@@ -85,19 +86,18 @@ class AssetsAudioPlayerWebPlugin {
         return Future.value(true);
       case 'seek':
         final String id = call.arguments['id'];
-        final double to = call.arguments['to'];
-        _getOrCreate(id).seek(
-          to: to,
-        );
+        final double to = (call.arguments['to'] as num).toDouble();
+        _getOrCreate(id).seek(to: to);
         return Future.value(true);
       case 'open':
         final String id = call.arguments['id'];
         final String path = call.arguments['path'];
         final String audioType = call.arguments['audioType'];
-        final double volume = call.arguments['volume'];
-        final double? seek = call.arguments['seek'];
-        final double playSpeed = call.arguments['playSpeed'];
-        final bool autoStart = call.arguments['autoStart'] ?? true;
+        final double volume = (call.arguments['volume'] as num).toDouble();
+        final double? seek = (call.arguments['seek'] as num?)?.toDouble();
+        final double playSpeed =
+            (call.arguments['playSpeed'] as num).toDouble();
+        final bool autoStart = call.arguments['autoStart'] ?? false;
         final Map? networkHeaders = call.arguments['networkHeaders'];
         final String? package = call.arguments['package'];
         return _getOrCreate(id).open(

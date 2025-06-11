@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:html' as html;
 
+import 'package:web/web.dart' as web;
 import 'package:flutter/services.dart';
 
 import 'abstract_web_player.dart';
@@ -18,7 +18,7 @@ class WebPlayerHtml extends WebPlayer {
     _onCanPlayListener?.cancel();
   }
 
-  html.AudioElement? _audioElement;
+  web.HTMLAudioElement? _audioElement;
 
   @override
   num get volume => _audioElement?.volume ?? 1.0;
@@ -68,7 +68,10 @@ class WebPlayerHtml extends WebPlayer {
       final durationMs = (_audioElement?.duration ?? 0) * 1000;
       if (durationMs != _durationMs) {
         _durationMs = durationMs;
-        channel.invokeMethod(WebPlayer.methodCurrent, {'totalDurationMs': durationMs});
+        channel.invokeMethod(
+          WebPlayer.methodCurrent,
+          {'totalDurationMs': durationMs},
+        );
       }
 
       if (_position != currentPosition) {
@@ -76,7 +79,7 @@ class WebPlayerHtml extends WebPlayer {
         final positionMs = currentPosition * 1000;
         channel.invokeMethod(WebPlayer.methodPosition, positionMs);
       }
-      return Future.delayed(Duration(milliseconds: 200)).then((value) {
+      return Future.delayed(const Duration(milliseconds: 200)).then((value) {
         return __listenPosition;
       });
     });
@@ -133,11 +136,7 @@ class WebPlayerHtml extends WebPlayer {
     stop();
     _durationMs = null;
     _position = null;
-    _audioElement = html.AudioElement(findAssetPath(
-      path,
-      audioType,
-      package: package,
-    ));
+    _audioElement = web.HTMLAudioElement();
 
     // it seems html audielement cannot take networkHeaders :'(
 
@@ -155,7 +154,10 @@ class WebPlayerHtml extends WebPlayer {
 
       if (durationMs != _durationMs) {
         _durationMs = durationMs;
-        channel.invokeMethod(WebPlayer.methodCurrent, {'totalDurationMs': durationMs});
+        channel.invokeMethod(
+          WebPlayer.methodCurrent,
+          {'totalDurationMs': durationMs},
+        );
       }
 
       if (seek != null) {
@@ -170,11 +172,18 @@ class WebPlayerHtml extends WebPlayer {
       _onCanPlayListener?.cancel();
       _onCanPlayListener = null;
     });
+
+    // The `src` of the _audioElement is the last property that is set, so all
+    // the listeners for the events that the plugin cares about are attached.
+    _audioElement!.src = findAssetPath(
+      path,
+      audioType,
+      package: package,
+    );
   }
 
   @override
   void seek({double? to}) {
-    print('Final Seeking To $to from ${_audioElement?.currentTime}');
     if (_audioElement != null && to != null) {
       /// Explainer on the `/1000`
       /// The value being sent down from the plugin
@@ -210,13 +219,13 @@ class WebPlayerHtml extends WebPlayer {
 
 class ForwardHandler {
   bool _isEnabled = false;
-  static final _timelapse = 300;
+  static const _timelapse = 300;
 
   void start(WebPlayerHtml player, double speed) async {
     _isEnabled = true;
     while (_isEnabled) {
       player.seekBy(by: speed * _timelapse);
-      await Future.delayed(Duration(milliseconds: _timelapse));
+      await Future.delayed(const Duration(milliseconds: _timelapse));
     }
   }
 

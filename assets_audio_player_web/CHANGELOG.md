@@ -1,3 +1,7 @@
+## 3.1.2
+
+- Migrates to `package:web` to support WASM
+
 ## 3.1.1
 
 - fix startup crash issue for some Android devices.
